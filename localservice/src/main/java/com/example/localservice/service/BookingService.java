@@ -6,7 +6,6 @@ import com.example.localservice.dto.BookingStatusUpdateDto;
 import com.example.localservice.entity.BookingStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import om.example.localservice.dto.UserDashboardResponse
 
 import java.util.List;
 

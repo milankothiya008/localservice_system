@@ -1,5 +1,6 @@
 package com.example.localservice.controller;
 
+import com.example.localservice.dto.ProviderDashboardResponse;
 import com.example.localservice.dto.ProviderResponseDto;
 import com.example.localservice.service.ProviderService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class ProviderController {
     }
 
     @GetMapping("/{providerId}/dashboard")
-    public ResponseEntity<com.example.localservice.dto.ProviderDashboardResponse> getProviderDashboard(@PathVariable Long providerId) {
+    public ResponseEntity<ProviderDashboardResponse> getProviderDashboard(@PathVariable Long providerId) {
         return ResponseEntity.ok(bookingService.getProviderDashboard(providerId));
     }
 }

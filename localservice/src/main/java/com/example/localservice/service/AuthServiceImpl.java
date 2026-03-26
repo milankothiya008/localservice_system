@@ -10,7 +10,13 @@ import com.example.localservice.exception.ResourceNotFoundException;
 import com.example.localservice.repository.ServiceItemRepository;
 import com.example.localservice.repository.ServiceProviderRepository;
 import com.example.localservice.repository.UserRepository;
+import com.example.localservice.security.CustomUserDetails;
+import com.example.localservice.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +27,9 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final ServiceProviderRepository providerRepository;
     private final ServiceItemRepository serviceItemRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     @Override
     @Transactional
@@ -32,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .password(request.getPassword()) // Plain text as requested, no Spring Security
+                .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
                 .build();
 
@@ -63,12 +72,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponseDto login(LoginDto request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BadRequestException("Invalid email or password"));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
 
-        if (!user.getPassword().equals(request.getPassword())) {
-            throw new BadRequestException("Invalid email or password");
-        }
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        String jwtToken = jwtUtil.generateToken(userDetails);
+        User user = userDetails.getUser();
 
         ServiceProvider provider = null;
         if (user.getRole() == Role.PROVIDER) {
@@ -78,6 +88,7 @@ public class AuthServiceImpl implements AuthService {
 
         return AuthResponseDto.builder()
                 .message("Login successful")
+                .token(jwtToken)
                 .user(mapToUserDto(user))
                 .provider(provider != null ? mapToProviderDto(provider) : null)
                 .build();
