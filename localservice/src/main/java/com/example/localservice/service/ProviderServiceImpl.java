@@ -1,7 +1,6 @@
 package com.example.localservice.service;
 
-import com.example.localservice.dto.ServiceDto;
-import com.example.localservice.dto.ServiceProviderDto;
+import com.example.localservice.dto.ProviderResponseDto;
 import com.example.localservice.repository.ServiceProviderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,16 +15,12 @@ public class ProviderServiceImpl implements ProviderService {
     private final ServiceProviderRepository providerRepository;
 
     @Override
-    public List<ServiceProviderDto> getProvidersByServiceId(Long serviceId) {
-        return providerRepository.findByServiceItemId(serviceId).stream()
-                .map(provider -> ServiceProviderDto.builder()
-                        .id(provider.getId())
-                        .userId(provider.getUser().getId())
-                        .name(provider.getUser().getName())
-                        .service(ServiceDto.builder()
-                                .id(provider.getServiceItem().getId())
-                                .name(provider.getServiceItem().getName())
-                                .build())
+    public List<ProviderResponseDto> searchProviders(Long serviceId, String keyword) {
+        return providerRepository.searchProviders(serviceId, keyword).stream()
+                .map(provider -> ProviderResponseDto.builder()
+                        .providerId(provider.getId())
+                        .providerName(provider.getUser().getName())
+                        .serviceName(provider.getServiceItem().getName())
                         .experience(provider.getExperience())
                         .build())
                 .collect(Collectors.toList());

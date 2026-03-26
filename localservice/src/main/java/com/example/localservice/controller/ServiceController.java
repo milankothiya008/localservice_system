@@ -18,7 +18,7 @@ public class ServiceController {
     private final ServiceItemService serviceItemService;
 
     @GetMapping
-    public ResponseEntity<List<ServiceDto>> getAllServices() {
-        return ResponseEntity.ok(serviceItemService.getAllServices());
+    public ResponseEntity<List<ServiceDto>> getAllServices(@org.springframework.web.bind.annotation.RequestParam(required = false) String name) {
+        return ResponseEntity.ok(serviceItemService.getAllServices(name));
     }
 }

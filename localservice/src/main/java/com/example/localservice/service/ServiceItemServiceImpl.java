@@ -15,8 +15,14 @@ public class ServiceItemServiceImpl implements ServiceItemService {
     private final ServiceItemRepository serviceItemRepository;
 
     @Override
-    public List<ServiceDto> getAllServices() {
-        return serviceItemRepository.findAll().stream()
+    public List<ServiceDto> getAllServices(String keyword) {
+        java.util.List<com.example.localservice.entity.ServiceItem> items;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            items = serviceItemRepository.findByNameContainingIgnoreCase(keyword.trim());
+        } else {
+            items = serviceItemRepository.findAll();
+        }
+        return items.stream()
                 .map(s -> ServiceDto.builder()
                         .id(s.getId())
                         .name(s.getName())

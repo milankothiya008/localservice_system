@@ -65,13 +65,17 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingResponseDto> getBookingsByProvider(Long providerId) {
+    public org.springframework.data.domain.Page<BookingResponseDto> getBookingsByProvider(Long providerId, com.example.localservice.entity.BookingStatus status, org.springframework.data.domain.Pageable pageable) {
         if (!providerRepository.existsById(providerId)) {
             throw new ResourceNotFoundException("Provider not found");
         }
-        return bookingRepository.findByProviderId(providerId).stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
+        org.springframework.data.domain.Page<Booking> bookings;
+        if (status != null) {
+            bookings = bookingRepository.findByProviderIdAndStatus(providerId, status, pageable);
+        } else {
+            bookings = bookingRepository.findByProviderId(providerId, pageable);
+        }
+        return bookings.map(this::mapToDto);
     }
 
     @Override
@@ -98,15 +102,10 @@ public class BookingServiceImpl implements BookingService {
 
     private BookingResponseDto mapToDto(Booking booking) {
         return BookingResponseDto.builder()
-                .id(booking.getId())
-                .userId(booking.getUser().getId())
-                .userName(booking.getUser().getName())
-                .providerId(booking.getProvider().getId())
-                .providerName(booking.getProvider().getUser().getName())
-                .serviceId(booking.getServiceItem().getId())
+                .bookingId(booking.getId())
                 .serviceName(booking.getServiceItem().getName())
+                .providerName(booking.getProvider().getUser().getName())
                 .status(booking.getStatus())
-                .createdAt(booking.getCreatedAt())
                 .serviceDate(booking.getServiceDate())
                 .build();
     }

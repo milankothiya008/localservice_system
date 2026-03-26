@@ -1,9 +1,9 @@
 package com.example.localservice.service;
 
-import com.example.localservice.dto.ServiceProviderDto;
+import com.example.localservice.dto.ProviderResponseDto;
 
 import java.util.List;
 
 public interface ProviderService {
-    List<ServiceProviderDto> getProvidersByServiceId(Long serviceId);
+    List<ProviderResponseDto> searchProviders(Long serviceId, String keyword);
 }

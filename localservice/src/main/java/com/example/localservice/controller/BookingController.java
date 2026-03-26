@@ -3,9 +3,14 @@ package com.example.localservice.controller;
 import com.example.localservice.dto.BookingRequestDto;
 import com.example.localservice.dto.BookingResponseDto;
 import com.example.localservice.dto.BookingStatusUpdateDto;
+import com.example.localservice.entity.BookingStatus;
 import com.example.localservice.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +30,11 @@ public class BookingController {
     }
 
     @GetMapping("/provider/{providerId}")
-    public ResponseEntity<List<BookingResponseDto>> getBookingsByProvider(@PathVariable Long providerId) {
-        return ResponseEntity.ok(bookingService.getBookingsByProvider(providerId));
+    public ResponseEntity<Page<BookingResponseDto>> getBookingsByProvider(
+            @PathVariable Long providerId,
+            @RequestParam(required = false) BookingStatus status,
+            @PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(bookingService.getBookingsByProvider(providerId, status, pageable));
     }
 
     @GetMapping("/user/{userId}")

@@ -1,6 +1,6 @@
 package com.example.localservice.controller;
 
-import com.example.localservice.dto.ServiceProviderDto;
+import com.example.localservice.dto.ProviderResponseDto;
 import com.example.localservice.service.ProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,11 @@ public class ProviderController {
     private final ProviderService providerService;
 
     @GetMapping
-    public ResponseEntity<List<ServiceProviderDto>> getProvidersByService(@RequestParam Long serviceId) {
-        return ResponseEntity.ok(providerService.getProvidersByServiceId(serviceId));
+    public ResponseEntity<List<ProviderResponseDto>> searchProviders(
+            @RequestParam(required = false) Long serviceId,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String name) {
+        String searchKey = keyword != null ? keyword : name;
+        return ResponseEntity.ok(providerService.searchProviders(serviceId, searchKey));
     }
 }

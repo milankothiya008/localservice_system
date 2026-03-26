@@ -7,21 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingResponseDto {
-    private Long id;
-    private Long userId;
-    private String userName;
-    private Long providerId;
-    private String providerName;
-    private Long serviceId;
+    private Long bookingId;
     private String serviceName;
+    private String providerName;
     private BookingStatus status;
-    private LocalDateTime createdAt;
     private LocalDate serviceDate;
 }
