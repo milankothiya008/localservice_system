@@ -15,4 +15,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Page<Booking> findByProviderIdAndStatus(Long providerId, BookingStatus status, Pageable pageable);
     List<Booking> findByUserId(Long userId);
     boolean existsByUserIdAndProviderIdAndServiceDate(Long userId, Long providerId, LocalDate serviceDate);
+    boolean existsByProviderIdAndServiceDateAndStatus(Long providerId, LocalDate serviceDate, BookingStatus status);
+    
+    long countByUserId(Long userId);
+    long countByUserIdAndStatus(Long userId, BookingStatus status);
+    long countByProviderId(Long providerId);
+    long countByProviderIdAndStatus(Long providerId, BookingStatus status);
 }
